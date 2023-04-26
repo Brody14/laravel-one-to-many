@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Type;
 use App\Http\Requests\StoreTypeRequest;
 use App\Http\Requests\UpdateTypeRequest;
+use App\Models\Project;
+use Illuminate\Support\Str;
+
 
 class TypeController extends Controller
 {
@@ -15,7 +18,8 @@ class TypeController extends Controller
      */
     public function index()
     {
-        //
+        $types = Type::all();
+        return view('types.index', compact('types'));
     }
 
     /**
@@ -25,7 +29,7 @@ class TypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('types.create');
     }
 
     /**
@@ -36,7 +40,11 @@ class TypeController extends Controller
      */
     public function store(StoreTypeRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $validated['slug'] =  Str::slug($validated['name']);
+
+        $new_type = Type::create($validated);
+        return to_route('types.show', $new_type);
     }
 
     /**
@@ -47,7 +55,8 @@ class TypeController extends Controller
      */
     public function show(Type $type)
     {
-        //
+        $projects = Project::where('type_id', $type->id)->get();
+        return view('types.show', compact('type', 'projects'));
     }
 
     /**
@@ -58,7 +67,7 @@ class TypeController extends Controller
      */
     public function edit(Type $type)
     {
-        //
+        return view('types.edit', compact('type'));
     }
 
     /**
@@ -70,7 +79,13 @@ class TypeController extends Controller
      */
     public function update(UpdateTypeRequest $request, Type $type)
     {
-        //
+        $validated = $request->validated();
+        if ($validated['name'] !== $type->name) {
+            $validated['slug'] =  Str::slug($validated['name']);
+        }
+
+        $type->update($validated);
+        return to_route('types.show', $type);
     }
 
     /**
@@ -81,6 +96,7 @@ class TypeController extends Controller
      */
     public function destroy(Type $type)
     {
-        //
+        $type->delete();
+        return back();
     }
 }

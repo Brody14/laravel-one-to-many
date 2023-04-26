@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('projects', ProjectController::class)->parameters([
         'projects' => 'project:slug'
+    ])->withTrashed(['show', 'edit', 'destroy', 'update']);
+
+    Route::resource('types', TypeController::class)->parameters([
+        'types' => 'type:slug'
     ])->withTrashed(['show', 'edit', 'destroy', 'update']);
 });
 
