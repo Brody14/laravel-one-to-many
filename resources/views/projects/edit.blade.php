@@ -52,6 +52,21 @@
             @enderror
         </div>
 
+        <div class="mb-3">
+            <label for="type-id" class="form-label">Type</label>
+            <select class="@error('type_id') is-invalid @enderror" id="type-id" name="type_id">
+                <option value="">Select a type</option>
+                @foreach ($types as $type)
+                  <option @selected(old('type_id', $project->type_id) == $type->id) value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+            </select>
+            @error('type_id')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+            @enderror
+        </div>
+
         <a href="{{route('projects.index')}}" class="btn btn-primary mb-3" role="button">Indietro</a>
         <button type="submit" class="btn btn-primary mb-3">Salva</button>
     </form>
