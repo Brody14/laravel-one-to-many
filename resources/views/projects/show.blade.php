@@ -23,7 +23,14 @@
               @endif
             </div>
           <div class="col">
-              <h3 class="project_title mb-4">Title: {{$project->title}}</h3>
+              <h3 class="project_title">Title: {{$project->title}}</h3>
+              
+                @if($project->type)
+                  <span class="badge text-bg-success mb-4 py-2">{{ $project->type->name }}</span>
+                @else
+                  <span class="badge text-bg-secondary mb-4 py-2"> Nessun Tipo </span>
+                @endif
+                
               <p class="m-0"><strong>Description:</strong></p>
               @if (!$project->description)
                   <p>Not available</p>
