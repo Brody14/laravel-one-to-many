@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
         'projects' => 'project:slug'
     ])->withTrashed(['show', 'edit', 'destroy', 'update']);
 
+    Route::post('types/{type:slug}/restore', [TypeController::class, 'restore'])->name('types.restore')->withTrashed();
+
     Route::resource('types', TypeController::class)->parameters([
         'types' => 'type:slug'
     ])->withTrashed(['show', 'edit', 'destroy', 'update']);

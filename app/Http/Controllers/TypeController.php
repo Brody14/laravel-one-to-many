@@ -6,6 +6,7 @@ use App\Models\Type;
 use App\Http\Requests\StoreTypeRequest;
 use App\Http\Requests\UpdateTypeRequest;
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 
@@ -16,10 +17,19 @@ class TypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $types = Type::all();
-        return view('types.index', compact('types'));
+        $trashed = $request->input('trashed');
+
+        if ($trashed) {
+            $types = Type::onlyTrashed()->get();
+        } else {
+            $types = Type::all();
+        }
+
+        $in_trash = Type::onlyTrashed()->count();
+
+        return view('types.index', compact('types', 'in_trash'));
     }
 
     /**
@@ -29,7 +39,7 @@ class TypeController extends Controller
      */
     public function create()
     {
-        return view('types.create');
+        return view('types.create')->with('success', 'Type created successfully');
     }
 
     /**
@@ -85,7 +95,16 @@ class TypeController extends Controller
         }
 
         $type->update($validated);
-        return to_route('types.show', $type);
+        return to_route('types.show', $type)->with('update', 'Type updated');
+    }
+
+    public function restore(Type $type)
+    {
+        if ($type->trashed()) {
+            $type->restore();
+        }
+
+        return back()->with('success', 'Type restored successfully');
     }
 
     /**
@@ -96,7 +115,12 @@ class TypeController extends Controller
      */
     public function destroy(Type $type)
     {
+        if ($type->trashed()) {
+            $type->forceDelete();
+            return to_route('types.index')->with('message', 'Type deleted');
+        }
+
         $type->delete();
-        return back();
+        return back()->with('moved', 'Type moved to trash');
     }
 }

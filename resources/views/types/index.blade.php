@@ -5,7 +5,12 @@
 <div class="container py-5 text-center">
     <h1>All Types</h1>
     <div class="d-flex justify-content-end py-2 gap-3">
-      <a class="btn btn-outline-success" href="{{ route('types.create')}}"> Add Type </i></a>
+      @if (request('trashed'))
+        <a class="btn btn-outline-dark" href="{{ route('types.index')}}"> All types </i></a>    
+      @else
+        <a class="btn btn-outline-dark" href="{{ route('types.index', ['trashed' => true])}}"> Trash ({{$in_trash}}) </i></a>    
+      @endif
+        <a class="btn btn-outline-success" href="{{ route('types.create')}}"> Add Type </i></a>
     </div>
 </div>
 
@@ -33,6 +38,14 @@
                         <i class="text-danger fa-regular fa-trash-can"></i>
                       </button>
                     </form>
+                      @if ($type->trashed())
+                        <form action="{{route('types.restore', $type)}}" method="POST">
+                          @csrf
+                          <button type="submit" class="border-0 bg-transparent">
+                            <i class="text-success fa-solid fa-trash-arrow-up"></i>
+                          </button>
+                        </form>
+                      @endif
                   </div>
                 </td>
               </tr>

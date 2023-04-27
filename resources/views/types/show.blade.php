@@ -13,6 +13,14 @@
                   <i class="text-danger fa-regular fa-trash-can"></i>
                 </button>
               </form>
+              @if ($type->trashed())
+              <form action="{{route('types.restore', $type)}}" method="POST">
+                @csrf
+                <button type="submit" class="border-0 bg-transparent">
+                  <i class="text-success fa-solid fa-trash-arrow-up"></i>
+                </button>
+              </form>
+              @endif
             </div>
           <div class="col">
               <h3>Name: {{$type->name}}</h3>
